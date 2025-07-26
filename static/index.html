@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dify - AI Agent 平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="top-nav">
+        <button class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="logo">
+            <i class="fas fa-brain"></i>
+            <span>Dify</span>
+        </div>
+        <div class="nav-links">
+            <a href="#" class="nav-link active">首页</a>
+            <a href="#">Coze</a>
+            <a href="#">Dify</a>
+            <a href="#">其他</a>
+        </div>
+        <div class="nav-right">
+            <button id="VIP" class="btn btn-primary">
+                <i class="fa-solid fa-gem"></i>VIP
+            </button>
+            <button id="help" class="btn btn-primary">
+                <i class="fas fa-question-circle"></i> 帮助
+            </button>
+            <button id="new-agent-btn" class="btn btn-primary">
+                <i class="fas fa-plus"></i> 新建Agent
+            </button>
+        </div>
+    </nav>
+
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-item active">
+                <i class="fas fa-home"></i>
+                <span>工作区</span>
+            </div>
+        </div>
+
+        <!-- 我的Agents子块 -->
+        <div class="sidebar-section">
+            <div class="sidebar-title">我的Agents</div>
+            <div class="agent-list">
+                <div class="agent-item active" data-agent="agent1">
+                    <i class="fas fa-robot"></i>
+                    <span>市场分析助手</span>
+                    <button class="delete-btn delete-agent" data-agent="agent1">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div class="agent-item" data-agent="agent2">
+                    <i class="fas fa-robot"></i>
+                    <span>技术支持专家</span>
+                    <button class="delete-btn delete-agent" data-agent="agent2">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div class="agent-item" data-agent="agent3">
+                    <i class="fas fa-robot"></i>
+                    <span>内容创作助手</span>
+                    <button class="delete-btn delete-agent" data-agent="agent3">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <button class="create-agent-btn" id="sidebar-create-agent">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>创建智能体</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 历史记录子块（动态加载） -->
+        <div class="sidebar-section">
+            <div class="sidebar-title">历史记录</div>
+            <div class="history-list" id="history-list">
+                <!-- 历史记录将在这里动态加载 -->
+            </div>
+            <button class="new-chat-btn" id="new-chat-btn">
+                <i class="fas fa-plus"></i>
+                <span>开启新对话</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+        <!-- 页面容器 -->
+        <div class="page-container">
+            <!-- 首页/聊天界面 -->
+            <div id="home-page" class="page active">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <div class="chat-header-left">
+                            <div>
+                                <div class="chat-title">
+                                    <i class="fas fa-robot"></i>
+                                    <span id="current-agent-name">市场分析助手</span>
+                                </div>
+                                <div class="agent-info">正在对话中 - 点击历史记录可查看过往对话</div>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="share-btn" id="share-agent-btn">
+                                <i class="fas fa-share-alt"></i>
+                                <span>分享智能体</span>
+                            </button>
+                            <div id="conversation-status">当前对话: 新对话</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-history" id="chat-history">
+                        <div class="message message-bot">
+                            您好！我是您的AI助手<span class="agent-name">市场分析助手</span>。我专注于市场趋势分析和商业策略建议。请问有什么可以帮您的吗？
+                            <div class="message-info">系统 · 刚刚</div>
+                        </div>
+                        
+                        <div class="message message-user">
+                            我需要一份关于AI行业的市场分析报告
+                            <div class="message-info">您 · 1分钟前</div>
+                        </div>
+                        
+                        <div class="message message-bot">
+                            好的，我可以为您准备一份AI行业的市场分析报告。目前AI行业正处于高速发展阶段，全球市场规模预计在2025年将达到1900亿美元，年复合增长率超过35%。请问您需要关注哪些具体方面？时间范围是什么？
+                            <div class="message-info">市场分析助手 · 刚刚</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 固定在底部的输入区域 -->
+                    <div class="input-area-container">
+                        <div class="input-area">
+                            <button class="attachment-btn">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                            <div class="input-container">
+                                <input type="text" class="chat-input" placeholder="输入消息..." id="message-input">
+                                <button class="voice-btn">
+                                    <i class="fas fa-microphone"></i>
+                                </button>
+                            </div>
+                            <button class="send-btn" id="send-btn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 确认删除弹窗 -->
+    <div class="confirm-modal" id="confirm-delete-modal">
+        <div class="confirm-container">
+            <div class="confirm-header">
+                <h3 class="confirm-title">删除确认</h3>
+                <button class="confirm-close-btn" id="close-confirm-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="confirm-content">
+                <p>您确定要删除此智能体吗？该操作不可撤销。</p>
+                <p>所有相关的历史记录和配置将被永久删除。</p>
+            </div>
+            <div class="confirm-footer">
+                <button class="confirm-cancel" id="cancel-delete">取消</button>
+                <button class="confirm-delete" id="confirm-delete">确认删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 创建智能体弹窗 -->
+    <div class="create-agent-modal" id="create-agent-modal">
+        <div class="create-agent-container">
+            <div class="create-agent-header">
+                <h2 class="page-title">创建新Agent</h2>
+                <button class="btn" id="close-create-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-share-alt"></i>导入分享的智能体创建
+                </h2>
+                
+                <div class="import-container">
+                    <input type="text" class="import-input" id="shared-agent-input" placeholder="输入分享链接或智能体ID进行创建">
+                    <button class="btn btn-primary import-creat-btn" id="import-agent-btn">导入</button>
+                </div>
+            </div>
+            
+
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-sliders-h"></i>配置Agent参数创建
+                </h2>
+                
+                <div class="form-group">
+                    <label class="form-label">自定义Agent名称 <span class="required">*</span></label>
+                    <!-- 定义一个 ​​文本输入框​​，用户可以在其中输入自定义的 Agent 名称。 -->
+                    <input type="text" class="form-input" id="agent-name" placeholder="输入Agent名称">
+                    <div class="form-error" id="name-error">请输入Agent名称!</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Agent描述 <span class="required">*</span></label>
+                    <textarea class="form-input" id="agent-desc" placeholder="输入Agent描述" rows="3"></textarea>
+                    <div class="form-error" id="desc-error">请输入Agent描述!</div>
+                </div>
+                
+                <!-- <div class="form-group">
+                    <label class="form-label">模型选择</label>
+                    <select class="form-select" id="agent-model">
+                        <option value="gpt-4">GPT-4</option>
+                        <option value="gpt-3.5" selected>GPT-3.5</option>
+                        <option value="claude-2">Claude 2</option>
+                        <option value="llama-2">Llama 2</option>
+                    </select>
+                </div> -->
+                
+                <div class="form-group">
+                    <label class="form-label">Agent链接<span class="required">*</span></label>
+                    <input type="text" class="form-input" id="agent-url" placeholder="https://...">
+                    <div class="form-error" id="url-error">请输入Agent的url</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">请求方法</label>
+                    <select class="form-select" id="request-method">
+                        <option value="GET">GET</option>
+                        <option value="POST" selected>POST</option>
+                        <option value="PUT">PUT</option>
+                        <option value="DELETE">DELETE</option>
+                    </select>
+                </div>
+                
+                <!-- <button class="toggle-advanced" id="toggle-advanced">
+                    <i class="fas fa-cog"></i> 高级配置
+                </button> -->
+                
+                <!-- <div class="advanced-config" id="advanced-config">
+                    <div class="form-group">
+                        <label class="form-label">温度 (Temperature)</label>
+                        <input type="range" id="temperature" min="0" max="1" step="0.1" value="0.7">
+                        <span id="temperature-value">0.7</span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">最大生成长度</label>
+                        <input type="number" class="form-input" id="max-tokens" value="1024">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">停止序列</label>
+                        <input type="text" class="form-input" id="stop-sequences" placeholder="输入停止序列 (用逗号分隔)">
+                    </div>
+                </div> -->
+            </div>
+            
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-heading"></i>请求头
+                </h2>
+                
+                <div id="headers-container">
+                    <div class="key-value-pair">
+                        <input type="text" class="key-value-input" placeholder="键" value="Content-Type">
+                        <input type="text" class="key-value-input" placeholder="值" value="application/json">
+                        <button class="remove-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="key-value-pair">
+                        <input type="text" class="key-value-input" placeholder="键" value="Authorization">
+                        <input type="text" class="key-value-input" placeholder="值" value="Bearer YOUR_API_KEY">
+                        <button class="remove-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <button id="add-header-btn" class="add-btn">
+                    <i class="fas fa-plus"></i> 添加请求头
+                </button>
+            </div>
+            
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-code"></i>请求体
+                </h2>
+                
+                <div id="body-container">
+                    <div class="key-value-pair">
+                        <input type="text" class="key-value-input" placeholder="键" value="model">
+                        <input type="text" class="key-value-input" placeholder="值" value="gpt-4">
+                        <button class="remove-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="key-value-pair">
+                        <input type="text" class="key-value-input" placeholder="键" value="temperature">
+                        <input type="text" class="key-value-input" placeholder="值" value="0.7">
+                        <button class="remove-btn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <button id="add-body-btn" class="add-btn">
+                    <i class="fas fa-plus"></i> 增加请求体
+                </button>
+            </div>
+            
+
+            
+            <div class="align-center" id="success-alert">
+                <i class="fas fa-check-circle"></i> Agent创建成功！
+            </div>
+            
+            <div class="align-center form-error" id="error-alert">
+                <i class="fas fa-exclamation-circle"></i> <span id="error-message">请填写所有必填字段！</span>
+            </div>
+            
+            <div class="import-container keep_right">
+                <button class="btn btn-primary create-btn" id="cancel-create">
+                    <i class="fas fa-times"></i> 取消
+                </button>
+                <button id="create-agent-btn" class="btn btn-primary create-btn">
+                    <i class="fas fa-check"></i> 确认创建
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

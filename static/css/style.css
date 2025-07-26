@@ -1,0 +1,796 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+:root {  /* 定义了一组 ​​CSS 自定义属性（变量）​​，方便全局统一管理颜色、阴影等样式。 */
+    --primary: #4f46e5;
+    --primary-dark: #4338ca;
+    --primary-light: #e0e7ff;
+    --secondary: #f9fafb;
+    --sidebar-bg: #1f2937;
+    --sidebar-text: #e5e7eb;
+    --sidebar-hover: #374151;
+    --sidebar-active: #4f46e5;
+    --chat-bg: #f3f4f6;
+    --border: #e5e7eb;
+    --success: #10b981;
+    --error: #ef4444;
+    --text-dark: #1f2937;
+    --text-light: #6b7280;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+body {
+    display: flex; /* 让 body 成为 Flex 容器，便于子元素（如侧边栏、主内容区）灵活布局。 */
+    min-height: 100vh;   /* 确保页面至少占满整个视口高度（确保全屏） */
+    background-color: var(--chat-bg); /* 背景色使用变量 `--chat-bg`（浅灰） */
+    color: var(--text-dark);
+    overflow: hidden;  /* 隐藏溢出内容（防止页面出现不必要的滚动条） */
+}
+
+/* 顶部导航栏 */
+.top-nav {
+    position: fixed;             /* 导航栏固定在页面顶部，导航栏固定在页面顶部，即使滚动页面也不会移动 */
+    top: 0;                      /* 距离顶部 0 */
+    left: 0;                     /* 距离左侧 0 */
+    right: 0;                    /* 距离右侧 0 */
+    height: 60px;                /* 高度 60px */
+    background: white;           /* 白色背景 */
+    display: flex;               /* Flex 布局 */
+    align-items: center;         /* 垂直居中子元素 */
+    padding: 0 24px;             /* 左右内边距 24px */
+    box-shadow: var(--shadow);   /* 使用变量 `--shadow` 的阴影效果 */
+    z-index: 100;                /* 层级 100,确保导航栏始终在最上层（避免被其他内容覆盖） */
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-right: 32px;
+}
+
+.logo i {
+    margin-right: 8px; /* 调整 Logo 中图标（如 Font Awesome 的 fa-brain）和文字之间的间距 */
+}
+
+.nav-links {
+    display: flex;
+    gap: 24px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-light);
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover {
+    color: var(--primary);
+}
+
+.nav-links a.active {
+    color: var(--primary);/* 当鼠标悬停在导航链接上时，将文字颜色设置为主题色（变量 `--primary`） */
+}
+
+.nav-right {
+    margin-left: auto;  /* 关键属性：将此元素推到父容器的最右侧（Flexbox 布局技巧） */
+    display: flex;      /* 启用 Flexbox 布局，使子元素（按钮）水平排列 */
+    gap: 16px;          /* 子元素（按钮）之间的间距为 16px */
+}
+
+.btn {
+    padding: 8px 16px;          /* 上下内边距 8px，左右内边距 16px */
+    border-radius: 6px;         /* 圆角半径 6px（轻微圆角效果） */
+    font-weight: 500;           /* 字体粗细 500（中等偏粗，提升可读性） */
+    cursor: pointer;            /* 鼠标悬停时显示手型指针（明确可点击性） */
+    transition: all 0.2s;       /* 所有属性变化添加 0.2秒的平滑过渡效果 */
+    border: none;               /* 移除默认边框（避免浏览器默认样式干扰） */
+    display: inline-flex;       /* 使用行内 Flexbox 布局（保持行内特性同时支持 Flex 对齐） */
+    align-items: center;        /* 垂直居中子元素（如图标和文字） */
+    gap: 8px;                   /* 子元素（如图标和文字）之间的间距 8px */
+    transition: transform 0.1s ease; /*按下时会有动画过渡*/
+}
+
+.btn:active{
+        /* 向下移动1-2像素，模拟按下效果 */
+        transform: translate(3px, 3px);
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-light);
+}
+
+.btn-outline:hover {
+    background-color: var(--secondary);
+}
+
+/* 侧边栏 */
+.sidebar {
+    width: 260px;
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    height: calc(100vh - 60px);
+    position: fixed;
+    top: 60px;
+    left: 0;
+    overflow-y: auto;
+    padding: 16px 0;
+    transition: transform 0.3s ease; /* 平滑动画 */
+    z-index: 90;
+}
+
+.sidebar-section {
+    margin-bottom: 24px;
+    padding: 0 16px;
+}
+
+.sidebar-title {
+    font-size: 0.75rem;
+    /* text-transform: uppercase; */
+    color: #9ca3af;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.sidebar-item:hover {
+    background-color: var(--sidebar-hover);
+}
+
+.sidebar-item.active {
+    background-color: var(--sidebar-active);
+}
+
+.sidebar-item i {
+    margin-right: 12px;
+    width: 20px;
+    text-align: center;
+}
+
+.agent-list {
+    padding-left: 0;
+}
+
+.agent-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px 8px 40px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    cursor: pointer;
+    position: relative;
+}
+
+.agent-item:hover {
+    background-color: var(--sidebar-hover);
+    display: flex; /* Flex布局 */
+    transform: translateX(5px); /* 轻微右移 */
+}
+
+.agent-item.active {
+    background-color: var(--sidebar-active);
+    transform: translate(3px, 3px);
+}
+
+.agent-item i {
+    margin-right: 8px;
+    color: #6b7280;
+}
+
+/* 默认水平排列 */
+.form-footer{   
+    display: flex;
+    justify-content: flex-end;  /*将子元素对齐到容器的末端（结束位置）*/
+    gap: 20px; /* 按钮间距 */
+}
+
+.form-footer-column{
+    display: flex;
+    flex-direction: column; /* 改为垂直排列 */
+    gap: 20px; /* 按钮间距 */
+}
+
+.create-agent-btn {
+    background: none;
+    border: none;
+    color: var(--sidebar-text);
+    padding: 8px 16px 8px 40px;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+    border-radius: 6px;
+}
+
+.create-agent-btn:hover {
+    background-color: var(--sidebar-hover);
+}
+
+.history-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    cursor: pointer;
+    position: relative;
+    font-size: 0.9rem;
+}
+
+.history-item:hover {
+    background-color: var(--sidebar-hover);
+}
+
+.history-item.active {
+    background-color: var(--sidebar-active);
+}
+
+.history-item i {
+    margin-right: 8px;
+    color: #9ca3af;
+    font-size: 0.8rem;
+}
+
+.new-chat-btn {
+    background: none;
+    border: 1px dashed rgba(156, 163, 175, 0.5);
+    color: var(--sidebar-text);
+    padding: 10px 16px;
+    text-align: center;
+    width: 100%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+    border-radius: 6px;
+    margin-top: 8px;
+}
+
+.new-chat-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/* 主内容区 */
+.main-content {
+    flex: 1;
+    margin-top: 60px;
+    margin-left: 260px;
+    height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    transition: margin-left 0.3s ease;
+    overflow: hidden;
+}
+
+/* 页面容器 */
+.page-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* 聊天界面 */
+.chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: white;
+    border-radius: 8px;
+    margin: 16px;
+    box-shadow: var(--shadow);
+    position: relative;
+}
+
+.chat-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    z-index: 10;
+}
+
+.chat-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 1.2rem;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.back-btn:hover {
+    background-color: var(--secondary);
+}
+
+.chat-title {
+    font-weight: 600;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chat-title i {
+    color: var(--primary);
+}
+
+.agent-info {
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.share-btn {
+    background: var(--primary-light);
+    color: var(--primary);
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.share-btn:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.share-btn.copied {
+    background: var(--success);
+    color: white;
+    animation: pulse 0.5s ease;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.chat-history {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.message {
+    max-width: 80%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    line-height: 1.5;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.message-user {
+    align-self: flex-end;
+    background-color: var(--primary);
+    color: white;
+    border-bottom-right-radius: 4px;
+}
+
+.message-bot {
+    align-self: flex-start;
+    background-color: var(--secondary);
+    color: var(--text-dark);
+    border-bottom-left-radius: 4px;
+}
+
+.message-info {
+    font-size: 0.75rem;
+    margin-top: 4px;
+    opacity: 0.7;
+}
+
+/* 固定在底部的输入区域 */
+.input-area-container {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    border-top: 1px solid var(--border);
+    padding: 16px 24px;
+    z-index: 5;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.input-area {
+    display: flex;
+    gap: 12px;
+}
+
+.input-container {
+    flex: 1;
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px;
+    background-color: var(--secondary);
+}
+
+.attachment-btn {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.attachment-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.chat-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 8px;
+    outline: none;
+    font-size: 1rem;
+}
+
+.voice-btn {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.voice-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.send-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.send-btn:hover {
+    background: var(--primary-dark);
+}
+
+/* 删除按钮 */
+.delete-btn {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: rgba(156, 163, 175, 0.5);
+    cursor: pointer;
+    transition: color 0.2s;
+    padding: 5px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-btn:hover {
+    color: var(--error);
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+/* 确认删除弹窗 */
+.confirm-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 400;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.confirm-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.confirm-container {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+    position: relative;
+}
+
+.confirm-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.confirm-title {
+    font-size: 1.25rem;
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+.confirm-close-btn {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.confirm-content {
+    margin-bottom: 24px;
+    color: var(--text-dark);
+    line-height: 1.5;
+}
+
+.confirm-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.confirm-cancel {
+    background: var(--secondary);
+    color: var(--text-dark);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.confirm-delete {
+    background: var(--error);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+/* 创建智能体弹窗 */
+.create-agent-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+
+
+.create-agent-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.import-container{
+    display: flex; /* 启用 Flexbox */
+    gap: 8px; /* 元素间距 */
+    flex-grow: 1; /* 占据所有可用空间 */
+    padding: 10px 12px; /* 适当的内边距 */
+    border: 1px solid #ddd; /* 边框样式 */
+    border-radius: 4px; /* 圆角 */
+}
+
+.keep_right{
+    display: grid;
+    grid-auto-flow: column; /* 让按钮排成一行 */
+    justify-content: end; /* 靠右对齐 */
+    gap: 20px;
+}
+.align-center{
+    display: flex;
+    align-items: center; /* 垂直居中 */
+}
+
+.import-creat-btn{
+    width: 80px;
+}
+
+.create-agent-container {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow);
+    position: relative;
+}
+
+.create-agent-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.page-title {
+    font-size: 1.5rem;
+    color: var(--text-dark);
+}
+
+.form-section {
+    padding: 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.section-title {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+}
+
+.section-title i {
+    margin-right: 10px;
+    color: var(--primary);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+
+.form-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border 0.2s;
+}
+
+.required {
+    color: red;
+    margin-left: 4px;
+}
+
+.form-error {
+    color: red;
+    margin-left: 4px;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+.form-select, .key-value-input, .import-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background-color: white;
+    font-size: 1rem;
+}
+
+.key-value-pair {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    align-items: center;
+}
+
+.remove-btn {
+    background: none;
+    border: none;
+    color: var(--error);
+    cursor: pointer;
+    font-size: 1.2rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.remove-btn:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+}

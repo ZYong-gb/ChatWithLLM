@@ -1,0 +1,16 @@
+# pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+
+fastapi
+uvicorn
+python-multipart
+httpx
+pydantic
+python-dotenv
+sqlalchemy
+databases[mysql]
+aiomysql  # 异步 MySQL 驱动
+cryptography  # MySQL 连接所需
+
+alembic  # （在异步中）管理数据库表
+pymysql

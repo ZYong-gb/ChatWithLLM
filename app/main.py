@@ -10,6 +10,7 @@ from app.api.account_api import login_router
 
 app = FastAPI()
 
+
 # 配置CORS，以便跨域请求
 app.add_middleware(
     CORSMiddleware,
